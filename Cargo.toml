@@ -1,6 +1,8 @@
 [package]
-name = "rust-school-of-expression"
+name = "rsoe"
 version = "0.1.0"
-authors = ["Krzysztof Langner <krzysztof@carlsolutions.com>"]
+authors = ["Krzysztof Langner <klangner@gmail.com>"]
 
 [dependencies]
+
+

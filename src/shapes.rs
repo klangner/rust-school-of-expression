@@ -3,7 +3,7 @@ trait HasArea{
     fn area(&self) -> f64;
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Shape {
     Rectangle {
         width: f64,
@@ -25,11 +25,14 @@ pub enum Shape {
     },
 }
 
-//impl HasArea for Rectangle {
-//    fn area(&self) -> f64 {
-//        self.width * self.height
-//    }
-//}
+impl HasArea for Shape {
+    fn area(&self) -> f64 {
+        match self {
+            &Shape::Rectangle {width: w, height: h} => w*h,
+            _ => 0.0,
+        }
+    }
+}
 
 
 pub fn rect(width: f64, height: f64) -> Shape {
@@ -54,4 +57,21 @@ pub fn rt_triangle(a: f64, b: f64) -> Shape {
 
 pub fn polygon(ps: Vec<f64>) -> Shape {
     Shape::Polygon {points: ps}
+}
+
+
+/// Some unit tests
+
+#[test]
+fn square_is_rect() {
+    let r = rect(100.0, 100.0);
+    let s = square(100.0);
+    assert!(r == s)
+}
+
+
+#[test]
+fn rect_area() {
+    let r = rect(100.0, 200.0);
+    assert!(r.area() == 20000.0)
 }

@@ -1,0 +1,6 @@
+[package]
+name = "rust-school-of-expression"
+version = "0.1.0"
+authors = ["Krzysztof Langner <krzysztof@carlsolutions.com>"]
+
+[dependencies]

@@ -12,8 +12,8 @@ pub trait HasArea{
 
 #[derive(Debug, PartialEq)]
 pub struct Point {
-    x: Float,
-    y: Float,
+    pub x: Float,
+    pub y: Float,
 }
 
 #[derive(Debug, PartialEq)]
@@ -34,7 +34,7 @@ pub enum Shape {
     },
 
     Polygon {
-        points: Vec<Point>,
+        points: Vec<Point>
     },
 }
 
@@ -47,21 +47,6 @@ impl HasArea for Shape {
             &Shape::Polygon {points: ref ps} => polygon_area(&ps),
         }
     }
-}
-
-
-/// Calculate distance between 2 points
-pub fn distance_between(p1: &Point, p2: &Point) -> Float {
-    ((p1.x - p2.x).powi(2) + (p1.y - p2.y).powi(2)).sqrt()
-}
-
-/// Calculate area of any triangle. Based on Heron.
-pub fn triangle_area(p1: &Point, p2: &Point, p3: &Point) -> Float {
-    let a = distance_between(&p1, &p2);
-    let b = distance_between(&p2, &p3);
-    let c = distance_between(&p3, &p1);
-    let s = 0.5*(a+b+c);
-    (s*(s-a)*(s-b)*(s-c)).sqrt()
 }
 
 
@@ -140,13 +125,6 @@ mod tests {
     }
 
     #[test]
-    fn distance_test() {
-        let p1 = Point { x: 2.0, y: 5.0 };
-        let p2 = Point { x: 5.0, y: 1.0 };
-        assert!(distance_between(&p1, &p2) == 5.0)
-    }
-
-    #[test]
     fn triangle_area_test() {
         let p1 = Point { x: 2.0, y: 5.0 };
         let p2 = Point { x: 2.0, y: 1.0 };
@@ -168,7 +146,6 @@ mod tests {
         let p3 = Point { x: 10.0, y: 9.0 };
         let p4 = Point { x: 13.0, y: 5.0 };
         let poly = polygon(vec![p1, p2, p3, p4]);
-        println!("Calculated area: {}", poly.area());
         assert!(poly.area().floor() == 24.0)
     }
 }

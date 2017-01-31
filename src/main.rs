@@ -7,5 +7,7 @@ fn main() {
     println!("Ellipse {:?}", shapes::ellipse(100.0, 200.0));
     println!("Circle {:?}", shapes::circle(100.0));
     println!("Right Traingle {:?}", shapes::rt_triangle(100.0, 200.0));
-    println!("Polygon {:?}", shapes::polygon(vec![100.0, 200.0, 300.0]));
+    println!("Polygon {:?}", shapes::polygon(vec![shapes::point(1.0, 3.0),
+                                                  shapes::point(2.0, 4.0),
+                                                  shapes::point(5.0, 3.0)]));
 }

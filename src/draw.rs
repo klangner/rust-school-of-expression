@@ -1,6 +1,7 @@
 
 use piston_window::{Graphics, ellipse, polygon, rectangle, types, math};
-use shapes::{Point, Shape};
+use geometry::{Point};
+use shapes::{Shape};
 
 
 pub fn draw_shape<G>(color: types::Color, pos: &Point, shape: &Shape, trans: math::Matrix2d,
@@ -18,7 +19,7 @@ pub fn draw_shape<G>(color: types::Color, pos: &Point, shape: &Shape, trans: mat
             polygon(color, &xs, trans, g);
         },
         &Shape::Polygon {points: ref ps} => {
-            let xs = ps.iter().map(|p| [p.x, p.y]).collect::<Vec<[f64; 2]>>();
+            let xs = ps.iter().map(|p| [p.x+pos.x, p.y+pos.y]).collect::<Vec<[f64; 2]>>();
             polygon(color, xs.as_slice(), trans, g);
         },
     }

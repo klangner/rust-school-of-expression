@@ -1,6 +1,7 @@
 
 use std::f64::consts::PI;
-use shapes::{Point, Shape, Float, distance_between};
+use geometry::{Point, Float, distance_between};
+use shapes::{Shape};
 
 
 pub trait HasPerimeter {

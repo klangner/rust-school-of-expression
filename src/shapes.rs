@@ -1,20 +1,17 @@
 
 use std::f64::consts::PI;
 use std::f64;
+use geometry::{Float, Point, point};
 
 
-/// Default type for coordinates
-pub type Float = f64;
-
-pub trait HasArea{
+pub trait HasArea {
     fn area(&self) -> Float;
 }
 
-#[derive(Debug, PartialEq)]
-pub struct Point {
-    pub x: Float,
-    pub y: Float,
+pub trait HasPoints {
+    fn is_in(&self, x: Float, y: Float) -> bool;
 }
+
 
 #[derive(Debug, PartialEq)]
 pub enum Shape {
@@ -49,22 +46,6 @@ impl HasArea for Shape {
     }
 }
 
-
-/// Calculate distance between 2 points
-pub fn distance_between(p1: &Point, p2: &Point) -> Float {
-    ((p1.x - p2.x).powi(2) + (p1.y - p2.y).powi(2)).sqrt()
-}
-
-/// Calculate area of any triangle. Based on Heron.
-pub fn triangle_area(p1: &Point, p2: &Point, p3: &Point) -> Float {
-    let a = distance_between(&p1, &p2);
-    let b = distance_between(&p2, &p3);
-    let c = distance_between(&p3, &p1);
-    let s = 0.5*(a+b+c);
-    (s*(s-a)*(s-b)*(s-c)).sqrt()
-}
-
-
 /// Calculate area of trapezoid
 /// The base of the trapezoid is X axis.
 pub fn trapezoid_area(p1: &Point, p2: &Point) -> Float {
@@ -90,9 +71,42 @@ fn polygon_area(ps: &Vec<Point>) -> Float {
 }
 
 
-pub fn point(x: Float, y: Float) -> Point {
-    Point { x: x, y: y}
+impl HasPoints for Shape {
+    fn is_in(&self, x: Float, y: Float) -> bool {
+        match self {
+            &Shape::Rectangle {width: w, height: h} => {
+                x >= 0.0 && x <= w && y >= 0.0 && y <= h
+            },
+            &Shape::Ellipse {rx: r1, ry: r2} => {
+                (x/r1).powi(2) + (y/r2).powi(2) <= 1.0
+            },
+            &Shape::RtTriangle {width: w, height: h} => {
+                let ps = vec![point(0.0, 0.0), point(w, 0.0), point(0.0, h)];
+                is_in_polygon(&ps, x, y)
+            },
+            &Shape::Polygon {points: ref ps} => is_in_polygon(&ps, x, y),
+        }
+    }
 }
+
+
+/// Calculate polygon area as a sum of trapezoids
+fn is_in_polygon(ps: &Vec<Point>, x: Float, y: Float) -> bool {
+    // Polygon need at least 3 vertices.
+    if ps.len() < 3 { return false }
+    let point = point(x, y);
+    let last_point = &ps[ps.len()-1];
+    ps.iter().fold((true, last_point), |(acc, lp), p| {
+        (acc && is_right_of_line(&point, &lp, &p), p)
+    }).0
+}
+
+fn is_right_of_line(p: &Point, a: &Point, b: &Point) -> bool {
+    let (s, t) = (p.x - a.x, p.y - a.y);
+    let (u, v) = (p.x - b.x, p.y - b.y);
+    s*v >= t*u
+}
+
 
 pub fn rect(width: Float, height: Float) -> Shape {
     Shape::Rectangle { width: width, height: height }
@@ -125,6 +139,7 @@ pub fn polygon(ps: Vec<Point>) -> Shape {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use geometry::{Point};
 
     #[test]
     fn square_is_rect_test() {
@@ -141,10 +156,7 @@ mod tests {
 
     #[test]
     fn triangle_area_test() {
-        let p1 = Point { x: 2.0, y: 5.0 };
-        let p2 = Point { x: 2.0, y: 1.0 };
-        let p3 = Point { x: 3.0, y: 1.0 };
-        assert!(triangle_area(&p1, &p2, &p3).floor() == 2.0)
+        assert!(rt_triangle(3.0, 4.0).area().floor() == 6.0)
     }
 
     #[test]
@@ -163,4 +175,37 @@ mod tests {
         let poly = polygon(vec![p1, p2, p3, p4]);
         assert!(poly.area().floor() == 24.0)
     }
+
+    #[test]
+    fn inside_rect_test() {
+        let r = rect(100.0, 100.0);
+        assert!(r.is_in(50.0, 23.0));
+        assert!(!r.is_in(150.0, 23.0));
+    }
+
+    #[test]
+    fn inside_ellipse_test() {
+        let r = ellipse(10.0, 5.0);
+        assert!(r.is_in(5.0, -3.0));
+        assert!(!r.is_in(150.0, 2.0));
+    }
+
+    #[test]
+    fn inside_polygon_test() {
+        let p1 = Point { x: 5.0, y: 1.0 };
+        let p2 = Point { x: 1.0, y: 5.0 };
+        let p3 = Point { x: 5.0, y: 9.0 };
+        let p4 = Point { x: 9.0, y: 5.0 };
+        let poly = polygon(vec![p1, p2, p3, p4]);
+        assert!(poly.is_in(5.0, 5.0));
+        assert!(!poly.is_in(150.0, 6.0));
+    }
+
+    #[test]
+    fn inside_triangle_test() {
+        let s = rt_triangle(3.0, 4.0);
+        assert!(s.is_in(1.0, 2.0));
+        assert!(!s.is_in(1.0, 12.0));
+    }
+
 }

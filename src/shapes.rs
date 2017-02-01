@@ -4,7 +4,7 @@ use std::f64;
 
 
 /// Default type for coordinates
-type Float = f64;
+pub type Float = f64;
 
 pub trait HasArea{
     fn area(&self) -> Float;
@@ -47,6 +47,21 @@ impl HasArea for Shape {
             &Shape::Polygon {points: ref ps} => polygon_area(&ps),
         }
     }
+}
+
+
+/// Calculate distance between 2 points
+pub fn distance_between(p1: &Point, p2: &Point) -> Float {
+    ((p1.x - p2.x).powi(2) + (p1.y - p2.y).powi(2)).sqrt()
+}
+
+/// Calculate area of any triangle. Based on Heron.
+pub fn triangle_area(p1: &Point, p2: &Point, p3: &Point) -> Float {
+    let a = distance_between(&p1, &p2);
+    let b = distance_between(&p2, &p3);
+    let c = distance_between(&p3, &p1);
+    let s = 0.5*(a+b+c);
+    (s*(s-a)*(s-b)*(s-c)).sqrt()
 }
 
 

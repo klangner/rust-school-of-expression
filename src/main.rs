@@ -2,6 +2,7 @@ extern crate piston_window;
 
 mod shapes;
 mod draw;
+mod perimeter;
 use piston_window::*;
 
 

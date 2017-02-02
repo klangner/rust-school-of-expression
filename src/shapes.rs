@@ -81,7 +81,7 @@ impl HasPoints for Shape {
                 (x/r1).powi(2) + (y/r2).powi(2) <= 1.0
             },
             &Shape::RtTriangle {width: w, height: h} => {
-                let ps = vec![point(0.0, 0.0), point(w, 0.0), point(0.0, h)];
+                let ps = vec![point(0.0, 0.0), point(0.0, h), point(w, 0.0)];
                 is_in_polygon(&ps, x, y)
             },
             &Shape::Polygon {points: ref ps} => is_in_polygon(&ps, x, y),
@@ -101,10 +101,11 @@ fn is_in_polygon(ps: &Vec<Point>, x: Float, y: Float) -> bool {
     }).0
 }
 
-fn is_right_of_line(p: &Point, a: &Point, b: &Point) -> bool {
+/// Check if point is on the right side of the line
+pub fn is_right_of_line(p: &Point, a: &Point, b: &Point) -> bool {
     let (s, t) = (p.x - a.x, p.y - a.y);
     let (u, v) = (p.x - b.x, p.y - b.y);
-    s*v >= t*u
+    s*v <= t*u
 }
 
 
@@ -206,6 +207,18 @@ mod tests {
         let s = rt_triangle(3.0, 4.0);
         assert!(s.is_in(1.0, 2.0));
         assert!(!s.is_in(1.0, 12.0));
+    }
+
+
+    #[test]
+    fn right_side_test() {
+        let a = Point { x: 1.0, y: 1.0 };
+        let b = Point { x: 5.0, y: 5.0 };
+        let p = Point { x: 3.0, y: 0.0 };
+        let q = Point { x: 3.0, y: 5.0 };
+
+        assert!(is_right_of_line(&p, &a, &b));
+        assert!(!is_right_of_line(&q, &a, &b));
     }
 
 }

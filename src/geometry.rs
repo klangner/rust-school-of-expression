@@ -14,8 +14,8 @@ pub struct Point {
 
 #[derive(Debug, PartialEq)]
 pub struct Vector {
-    dx: Float,
-    dy: Float
+    pub x: Float,
+    pub y: Float
 }
 
 
@@ -28,9 +28,9 @@ pub fn point(x: Float, y: Float) -> Point {
     Point { x: x, y: y}
 }
 
-//pub fn vector(x: Float, y: Float) -> Vector {
-//    Vector { dx: x, dy: y}
-//}
+pub fn vector(x: Float, y: Float) -> Vector {
+    Vector { x: x, y: y}
+}
 
 
 /// ------------------------------------------------------------------------------------------------

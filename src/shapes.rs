@@ -102,7 +102,7 @@ fn is_in_polygon(ps: &Vec<Point>, x: Float, y: Float) -> bool {
 }
 
 /// Check if point is on the right side of the line
-pub fn is_right_of_line(p: &Point, a: &Point, b: &Point) -> bool {
+fn is_right_of_line(p: &Point, a: &Point, b: &Point) -> bool {
     let (s, t) = (p.x - a.x, p.y - a.y);
     let (u, v) = (p.x - b.x, p.y - b.y);
     s*v <= t*u
@@ -208,17 +208,4 @@ mod tests {
         assert!(s.is_in(1.0, 2.0));
         assert!(!s.is_in(1.0, 12.0));
     }
-
-
-    #[test]
-    fn right_side_test() {
-        let a = Point { x: 1.0, y: 1.0 };
-        let b = Point { x: 5.0, y: 5.0 };
-        let p = Point { x: 3.0, y: 0.0 };
-        let q = Point { x: 3.0, y: 5.0 };
-
-        assert!(is_right_of_line(&p, &a, &b));
-        assert!(!is_right_of_line(&q, &a, &b));
-    }
-
 }

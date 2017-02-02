@@ -4,6 +4,7 @@ mod shapes;
 mod draw;
 mod perimeter;
 mod geometry;
+mod regions;
 use piston_window::*;
 
 
